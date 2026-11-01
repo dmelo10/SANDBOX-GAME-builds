@@ -1,0 +1,4 @@
+# The station runs on Windows: its scripts keep Windows line endings, also in the repository's ZIP download.
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.md text eol=crlf
