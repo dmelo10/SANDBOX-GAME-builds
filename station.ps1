@@ -82,10 +82,14 @@ try {
             catch { Say "taking $published failed ($_): trying again" }
         }
         elseif (-not $published -and -not $current) { Say 'the release could not be read (gh auth login?): trying again' }
-        foreach ($number in @($script:bots.Keys)) {
-            if ($script:bots[$number].HasExited) { Say ('Bot{0:D2} quit: starting it again' -f $number); Start-Bot $number }
+        # A bot quits when the host drops it (the host closed): it is started again within 5 s, for the next host.
+        $until = (Get-Date).AddSeconds($CheckSeconds)
+        while ((Get-Date) -lt $until) {
+            foreach ($number in @($script:bots.Keys)) {
+                if ($script:bots[$number].HasExited) { Say ('Bot{0:D2} quit: starting it again' -f $number); Start-Bot $number }
+            }
+            Start-Sleep -Seconds 5
         }
-        Start-Sleep -Seconds $CheckSeconds
     }
 }
 finally {
